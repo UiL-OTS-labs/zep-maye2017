@@ -1,0 +1,237 @@
+
+import hvf_event;
+import defs;
+import output;
+//import habituation_handler;
+
+import test_page;
+import attention_page;
+import stimuli;
+
+Block task
+{
+    int nth_list;
+    int hab_crit_met;
+
+    on_event:entry()
+    {
+        control.target = this;
+
+        control.enable_key(KEY_Return, EVENT_STOP_LOOKING);
+        control.enable_key(' '       , EVENT_STOP_LOOKING);
+        control.enable_key(KEY_Escape, EVENT_START_LOOKING);
+
+        control.button_box.disable_buttons();
+        control.button_box.enable_button(int(BUTTON_LEFT), EVENT_STOP_LOOKING);
+        control.button_box.enable_button(int(BUTTON_LOWER),EVENT_START_ATTENTION);
+        control.button_box.enable_button(int(BUTTON_RIGHT),EVENT_START_LOOKING);
+
+        nth_list = int(selected_group)/2; 
+        hab_crit_met = false;
+    }
+
+    on_event:exit()
+    {
+        control.button_box.disable_buttons();
+    }
+
+    //--------- Habituation -----------
+
+    Block habituation
+    {
+        TestItem[] item_list;
+
+        on_event:entry()
+        {
+            item_list = hab_items[nth_list];
+            num_cycles = MAX_HABITUATION_TRIALS;
+        }
+
+        on_event:exit()
+        {
+            save_output();
+        }
+
+        Trial grab_attention
+        {
+            on_event:entry()
+            {
+                test_page.setup(item_list);
+                attention_page.setup();
+                attention_page.action(this, reference_time, 0ms);
+            }
+        }
+
+        Trial trial
+        {
+
+            on_event:entry()
+            {
+                test_page.action(
+                        this,
+                        reference_time,
+                        habituation.cycle + 1
+                        );
+            }
+            
+            on_event:exit()
+            {
+                TestOutput output;
+                output.trialnum = habituation.cycle + 1;
+                output.lt       = int(test_page.response.cumlt);
+                output.nlt      = int(test_page.response.cumnlt);
+                output.looks    = test_page.response.nlooks;
+                output.lookaways= test_page.response.nlookaways;
+                output.phase    = PHASE_HAB;
+                output.crit_met = hab_crit_met;
+
+                output_append(output);
+                if (habituation_done()) {
+                    /* Update last appended stimulus. Since the
+                     * criterion was met there.
+                     */
+                    test_output[test_output.size-1].crit_met = true;
+                    hab_crit_met = true;
+                }
+            }
+        }
+
+        // Tests whether the habituation criterion is met.
+        TransientPart test_hab_done
+        {
+            on_event:entry()
+            {
+                if (habituation_done())
+                    habituation.leave();
+            }
+        }
+    }
+
+    Block test
+    {
+        TestItem[] item_list;
+
+        on_event:exit()
+        {
+            save_output();
+        }
+            
+        on_event:entry()
+        {
+            attention_page.setup();
+
+            item_list = test_items[nth_list];
+
+            if (MAX_TEST_TRIALS <= 0)
+                num_cycles = test_items[nth_list].size;
+            else
+                num_cycles = MAX_TEST_TRIALS;
+        }
+
+        Trial grab_attention
+        {
+            on_event:entry()
+            {
+                test_page.setup(item_list);
+                attention_page.setup();
+                attention_page.action(this, reference_time, 0ms);
+            }
+        }
+
+        Trial trial
+        {
+
+            on_event:entry()
+            {
+                test_page.action(
+                        this,
+                        reference_time,
+                        test.cycle + 1
+                        );
+            }
+            
+            on_event:exit()
+            {
+                TestOutput output;
+
+                output.trialnum = test.cycle + 1;
+                output.lt       = int(test_page.response.cumlt);
+                output.nlt      = int(test_page.response.cumnlt);
+                output.looks    = test_page.response.nlooks;
+                output.lookaways= test_page.response.nlookaways;
+                output.phase    = PHASE_TEST;
+                output.crit_met = hab_crit_met;
+
+                output_append(output);
+
+            }
+        }
+    }
+   
+    // Displays one additional trial to check whether the child has attention
+    // in general
+    Block attention
+    {
+        TestItem[] item_list;
+
+        on_event:exit()
+        {
+            save_output();
+        }
+            
+        on_event:entry()
+        {
+            attention_page.setup();
+
+            item_list = attention_items;
+
+            if (MAX_ATTENTION_TRIALS <= 0)
+                num_cycles = item_list.size;
+            else
+                num_cycles = MAX_ATTENTION_TRIALS;
+        }
+
+        Trial grab_attention
+        {
+            on_event:entry()
+            {
+                test_page.setup(item_list);
+                attention_page.setup();
+                attention_page.action(this, reference_time, 0ms);
+            }
+        }
+
+        Trial trial
+        {
+            on_event:entry()
+            {
+                test_page.action(
+                        this,
+                        reference_time,
+                        test.cycle + 1
+                        );
+            }
+            
+            on_event:exit()
+            {
+                TestOutput output;
+
+                output.trialnum = test.cycle + 1;
+                output.lt       = int(test_page.response.cumlt);
+                output.nlt      = int(test_page.response.cumnlt);
+                output.looks    = test_page.response.nlooks;
+                output.lookaways= test_page.response.nlookaways;
+                output.phase    = PHASE_ATTENTION;
+                output.crit_met = hab_crit_met;
+
+                output_append(output);
+            }
+        }
+    }
+}
+
+
+void action (Part caller)
+{
+    task.enter(caller);
+}

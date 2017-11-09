@@ -1,0 +1,20 @@
+
+
+enum TestGroup
+{
+    ML_L1,      // Mono lingual list 1
+    BL_L1,      // Bi lingual list 1
+    ML_L2,      // Mono lingual list 2
+    BL_L2,      // Bi lingual list 2
+}
+
+const int n_groups = 2;
+const int n_lists  = 2;
+
+int assign_participant_to_group()
+{
+    if(select_group_from_participant_id() != OK)
+        select_group_random();
+
+    return OK;
+}

@@ -1,0 +1,83 @@
+
+
+// Single line of output for the familiarization/habituation phase.
+
+enum exp_phase {
+    PHASE_HAB,
+    PHASE_TEST,
+    PHASE_ATTENTION
+};
+
+
+/**
+ * Describes the output of the phase.
+ */
+record TestOutput
+{
+    exp_phase phase;    // the phase of the experiment
+    int     trialnum;   // 
+//    int     id;         // id's change stimulus after stimulus.
+    int     lt;         // looking time(ms)
+    int     nlt;        // time spend not looking.
+    int     looks;      // number of time a child looks to the stimulus.
+    int     lookaways;  // number of time a child looked away.
+    bool    crit_met;   // is the habituation criterion met.
+}
+
+record StimOutput
+{
+    int     trial;      // the trial
+    int     tstart;     // time start of the stimulus
+    int     tend;       // time end of the stimulus
+    string  stimulus;   // the name of the stimulus
+}
+
+TestOutput[..] test_output;
+StimOutput[..] test_stim_output;
+
+
+void output_append(TestOutput output)
+{
+    test_output.size = test_output.size + 1;
+    test_output[test_output.size-1] = output;
+}
+
+void stimulus_output_append(StimOutput output)
+{
+    test_stim_output.size = test_stim_output.size + 1;
+    test_stim_output[test_stim_output.size-1] = output;
+}
+
+void save_output()
+{
+    string fn = expdb.experiment.session.create_table(namespace_name, 1);
+    test_output.append(fn, namespace_name + ": test results");
+    test_output.size = 0;
+    
+    fn = expdb.experiment.session.create_table(namespace_name, 2);
+    test_stim_output.append(fn, ": stimulus table");
+    test_stim_output.size = 0;
+}
+
+// is called from task.zm to check whether the infant has habituated.
+bool habituation_done()
+{
+    if (test_output.size < 6)
+        return false;
+
+    real mean_first3 = (test_output[0].lt +
+                        test_output[1].lt +
+                        test_output[2].lt ) / 3;
+
+    real mean_last3  = (test_output[test_output.size - 3].lt +
+                        test_output[test_output.size - 2].lt +
+                        test_output[test_output.size - 1].lt ) / 3;
+    
+    return mean_first3 * 0.65 > mean_last3;
+}
+
+void stim_output_append(StimOutput output)
+{
+    test_stim_output.size = test_stim_output.size + 1;
+    test_stim_output[test_stim_output.size - 1] = output;
+}

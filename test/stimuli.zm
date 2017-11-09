@@ -1,0 +1,269 @@
+
+
+enum ItemType
+{
+    HABITUATION,        // Stimulus from habituation phase
+    NOVEL,              // Stimulus from test phase
+    ATTENTION           // Stimulus to check the infants 
+}
+
+record TestItem
+{
+    int         id;         // The id of the trial.
+    ItemType    type;       // What type of stimulus is presented.
+    string      snd_fn;     // Which stimulus is presented.
+}
+
+string[..] unimodal = {
+    "ae_1_01",
+    "ae_1_02",
+    "ae_1_03",
+    "ae_1_04",
+    "ae_1_01",
+    "ae_1_02",
+    "ae_1_03",
+    "ae_1_04",
+    "ae_2_01",
+    "ae_2_02",
+    "ae_2_03",
+    "ae_2_04",
+    "ae_2_01",
+    "ae_2_02",
+    "ae_2_03",
+    "ae_2_04",
+    "ae_3_01",
+    "ae_3_02",
+    "ae_3_03",
+    "ae_3_04",
+    "ae_3_01",
+    "ae_3_02",
+    "ae_3_03",
+    "ae_3_04",
+    "ae_4_01",
+    "ae_4_02",
+    "ae_4_03",
+    "ae_4_04",
+    "ae_4_01",
+    "ae_4_02",
+    "ae_4_03",
+    "ae_4_04",
+    "ae_5_01",
+    "ae_5_02",
+    "ae_5_03",
+    "ae_5_04",
+    "ae_5_01",
+    "ae_5_02",
+    "ae_5_03",
+    "ae_5_04",
+    "ae_6_01",
+    "ae_6_02",
+    "ae_6_03",
+    "ae_6_04",
+    "ae_6_01",
+    "ae_6_02",
+    "ae_6_03",
+    "ae_6_04",
+    "ae_7_01",
+    "ae_7_02",
+    "ae_7_03",
+    "ae_7_04",
+    "ae_7_01",
+    "ae_7_02",
+    "ae_7_03",
+    "ae_7_04",
+    "ae_8_01",
+    "ae_8_02",
+    "ae_8_03",
+    "ae_8_04",
+    "ae_8_01",
+    "ae_8_02",
+    "ae_8_03",
+    "ae_8_04",
+};
+
+string[..] bimodal = {
+    "ae_1_01",
+    "ae_1_02",
+    "ae_1_03",
+    "ae_1_04",
+    "ae_1_01",
+    "ae_1_02",
+    "ae_1_03",
+    "ae_1_04",
+    "ae_2_01",
+    "ae_2_02",
+    "ae_2_03",
+    "ae_2_04",
+    "ae_2_01",
+    "ae_2_02",
+    "ae_2_03",
+    "ae_2_04",
+    "ae_3_01",
+    "ae_3_02",
+    "ae_3_03",
+    "ae_3_04",
+    "ae_3_01",
+    "ae_3_02",
+    "ae_3_03",
+    "ae_3_04",
+    "ae_4_01",
+    "ae_4_02",
+    "ae_4_03",
+    "ae_4_04",
+    "ae_4_01",
+    "ae_4_02",
+    "ae_4_03",
+    "ae_4_04",
+    "ae_5_01",
+    "ae_5_02",
+    "ae_5_03",
+    "ae_5_04",
+    "ae_5_01",
+    "ae_5_02",
+    "ae_5_03",
+    "ae_5_04",
+    "ae_6_01",
+    "ae_6_02",
+    "ae_6_03",
+    "ae_6_04",
+    "ae_6_01",
+    "ae_6_02",
+    "ae_6_03",
+    "ae_6_04",
+    "ae_7_01",
+    "ae_7_02",
+    "ae_7_03",
+    "ae_7_04",
+    "ae_7_01",
+    "ae_7_02",
+    "ae_7_03",
+    "ae_7_04",
+    "ae_8_01",
+    "ae_8_02",
+    "ae_8_03",
+    "ae_8_04",
+    "ae_8_01",
+    "ae_8_02",
+    "ae_8_03",
+    "ae_8_04",
+};
+         
+
+TestItem[..][..] hab_items =
+{
+    { // List 1
+        {1, HABITUATION, "bep1"},
+        {2, HABITUATION, "bep2"},
+        {3, HABITUATION, "bep3"},
+        {4, HABITUATION, "bep4"},
+        {5, HABITUATION, "bep5"}
+    },
+    { // List 2
+        {1, HABITUATION, "bip1"},
+        {2, HABITUATION, "bip2"},
+        {3, HABITUATION, "bip3"},
+        {4, HABITUATION, "bip4"},
+        {5, HABITUATION, "bip5"}
+    }
+};
+
+/**
+ * In this experiment the stimuli are selected randomly from the test page.
+ */
+void shuffle_hab_items()
+{
+    int i;
+    while (i < hab_items.size)
+    {
+        hab_items[i].shuffle(0, hab_items[i].size);
+        i++;
+    }
+}
+
+// This list is stimuluswise a mirror of the habituation items, since in the
+// 
+TestItem[..][..] test_items =
+{
+    { // List 1
+        {1, NOVEL, "bip1"},
+        {2, NOVEL, "bip2"},
+        {3, NOVEL, "bip3"},
+        {4, NOVEL, "bip4"},
+        {5, NOVEL, "bip5"}
+    },
+    { // List 2
+        {1, NOVEL, "bep1"},
+        {2, NOVEL, "bep2"},
+        {3, NOVEL, "bep3"},
+        {4, NOVEL, "bep4"},
+        {5, NOVEL, "bep5"}
+    }
+};
+
+void shuffle_test_items()
+{
+    int i;
+    while (i < test_items.size)
+    {
+        test_items[i].shuffle(0, test_items[i].size);
+        i++;
+    }
+}
+
+TestItem[..] attention_items =
+{
+    {1, ATTENTION, "bupoki-final"},
+//    {2, ATTENTION, "bupoki2"},
+//    {3, ATTENTION, "bupoki3"},
+//    {4, ATTENTION, "bupoki4"},
+//    {5, ATTENTION, "bupoki5"}
+};
+
+string[..] video_frames = {
+    "stimuli/movies/frame000.png",
+    "stimuli/movies/frame001.png",
+    "stimuli/movies/frame002.png",
+    "stimuli/movies/frame003.png",
+    "stimuli/movies/frame004.png",
+    "stimuli/movies/frame005.png",
+    "stimuli/movies/frame006.png",
+    "stimuli/movies/frame007.png",
+    "stimuli/movies/frame008.png",
+    "stimuli/movies/frame009.png",
+    "stimuli/movies/frame010.png",
+    "stimuli/movies/frame011.png",
+    "stimuli/movies/frame012.png",
+    "stimuli/movies/frame013.png",
+    "stimuli/movies/frame014.png",
+    "stimuli/movies/frame015.png",
+    "stimuli/movies/frame016.png",
+    "stimuli/movies/frame017.png",
+    "stimuli/movies/frame018.png",
+    "stimuli/movies/frame019.png",
+    "stimuli/movies/frame020.png",
+};
+
+int movie_frame_index   = 0;
+int movie_frame_inc     = 1;
+
+/**
+ * capture next frame of video in such a way that the first frame is 0 and
+ * then it moves towards video_frames.size. Once it is in the end position
+ * the direction is reversed.
+ */
+string next_movie_stim()
+{
+    string ret = video_frames[movie_frame_index];
+    if (movie_frame_index == video_frames.size - 1 && movie_frame_inc != -1)
+        movie_frame_inc = -1;
+    else if(movie_frame_index == 0 && movie_frame_inc != 1)
+        movie_frame_inc = 1;
+    movie_frame_index += movie_frame_inc;
+    return ret;
+}
+
+void reset_movie_stims()
+{
+    movie_frame_index = 0;
+    movie_frame_inc   = 1;
+}
