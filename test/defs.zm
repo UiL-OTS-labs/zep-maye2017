@@ -2,6 +2,13 @@
 // definitions in the experiment these are constant values used throughout
 // the experiment.
 
+// familiarization phase.
+const int  N_GRID_IMS                   = 4; // Number of visible grid images.
+                                             // Must be a value smaller then 9.
+const dur  INTER_GRID_DURATION          = 2s;// Time between update of 3*3 grid.
+const dur  FAM_ISI                      = 1000ms;
+
+// test/habituation phase.
 
 const dur  TEST_ISI                     = 1000ms;
 const int  MAX_HABITUATION_TRIALS	    = 25;

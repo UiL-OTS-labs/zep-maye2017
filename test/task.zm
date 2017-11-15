@@ -2,8 +2,8 @@
 import hvf_event;
 import defs;
 import output;
-//import habituation_handler;
 
+import fam_page;
 import test_page;
 import attention_page;
 import stimuli;
@@ -33,6 +33,113 @@ Block task
     on_event:exit()
     {
         control.button_box.disable_buttons();
+    } 
+
+    //--------- Familiarization -------
+
+    Block familiarization
+    {
+        on_event:entry()
+        {
+            prepare_fam_items();
+            num_cycles = fam_items.size;
+            if (have_flag("short")) {
+                num_cycles = 10;
+            }
+        }
+
+        on_event:exit()
+        {
+            // Stop grid stops the response and collects the last
+            // looking data we store this under trial -1.
+            fam_page.stop_grid();
+            TestOutput output;
+
+            output.trialnum = -1;
+            output.lt       = int(fam_page.response.cumlt);
+            output.nlt      = int(fam_page.response.cumnlt);
+            output.looks    = fam_page.response.nlooks;
+            output.lookaways= fam_page.response.nlookaways;
+            output.phase    = PHASE_FAM;
+            output.crit_met = hab_crit_met;
+
+            fam_output_append(output);
+            
+            save_fam_output();
+        }
+
+        // Run the attention getter once before the first trial.
+        // skip in all other cases.
+        TransientPart skip_attention
+        {
+            on_event:entry()
+            {
+                if (familiarization.cycle == 0) {
+                    grab_attention.enter();
+                }
+                else {
+                    trial.enter();
+                }
+            }
+        }
+        
+        Trial grab_attention
+        {
+            on_event:entry()
+            {
+                attention_page.setup();
+                attention_page.action(this, reference_time, 0ms);
+            }
+
+            on_event:exit()
+            {
+                trial.reference_time = fam_page.start_grid(now());
+            }
+        }
+        
+        Trial trial
+        {
+            on_event:entry()
+            {
+                TestItem item;
+                bool is_last = false;
+                if (familiarization.cycle == familiarization.num_cycles - 1)
+                    is_last = true;
+
+                item = fam_items[familiarization.cycle];
+                //println( "dur = " + (reference_time - zero_time()));
+                if (familiarization.cycle == 0) // start right after attention
+                    fam_page.action(
+                            this,
+                            event_time,
+                            item,
+                            is_last
+                            );
+                else // start after isi.
+                    fam_page.action(
+                            this,
+                            reference_time + FAM_ISI,
+                            item,
+                            is_last
+                            );
+                
+            }
+
+            on_event:exit()
+            {
+                TestOutput output;
+
+                output.trialnum = familiarization.cycle + 1;
+                output.lt       = int(fam_page.response.cumlt);
+                output.nlt      = int(fam_page.response.cumnlt);
+                output.looks    = fam_page.response.nlooks;
+                output.lookaways= fam_page.response.nlookaways;
+                output.phase    = PHASE_HAB;
+                output.crit_met = hab_crit_met;
+
+                fam_output_append (output);
+            }
+        }
     }
 
     //--------- Habituation -----------
@@ -43,7 +150,7 @@ Block task
 
         on_event:entry()
         {
-            item_list = hab_items[nth_list];
+            item_list  = hab_items[nth_list];
             num_cycles = MAX_HABITUATION_TRIALS;
         }
 
