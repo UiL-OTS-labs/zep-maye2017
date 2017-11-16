@@ -333,7 +333,7 @@ Page test_page
         {
             abort();
             playback.device = sound_output_device;
-            clip.file = stimuli_dir() + "audio/" + item.snd_fn + ".wav";
+            clip.file = stimuli_dir() + "sounds/" + item.snd_fn + ".wav";
 
             start (t);
             return expected_start_time;
@@ -358,7 +358,7 @@ Page test_page
         item        = item_list[random(0, item_list.size)];
 
         // preload the file
-        audio.clip.file = stimuli_dir() + "audio/" + item.snd_fn + ".wav";
+        audio.clip.file = stimuli_dir() + "sounds/" + item.snd_fn + ".wav";
     }
 
     time action(Object      caller,
