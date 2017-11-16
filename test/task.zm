@@ -44,27 +44,13 @@ Block task
             prepare_fam_items();
             num_cycles = fam_items.size;
             if (have_flag("short")) {
-                num_cycles = 10;
+                num_cycles = 5;
             }
         }
 
         on_event:exit()
         {
-            // Stop grid stops the response and collects the last
-            // looking data we store this under trial -1.
             fam_page.stop_grid();
-            TestOutput output;
-
-            output.trialnum = -1;
-            output.lt       = int(fam_page.response.cumlt);
-            output.nlt      = int(fam_page.response.cumnlt);
-            output.looks    = fam_page.response.nlooks;
-            output.lookaways= fam_page.response.nlookaways;
-            output.phase    = PHASE_FAM;
-            output.crit_met = hab_crit_met;
-
-            fam_output_append(output);
-            
             save_fam_output();
         }
 
@@ -107,7 +93,6 @@ Block task
                     is_last = true;
 
                 item = fam_items[familiarization.cycle];
-                //println( "dur = " + (reference_time - zero_time()));
                 if (familiarization.cycle == 0) // start right after attention
                     fam_page.action(
                             this,
@@ -134,7 +119,7 @@ Block task
                 output.nlt      = int(fam_page.response.cumnlt);
                 output.looks    = fam_page.response.nlooks;
                 output.lookaways= fam_page.response.nlookaways;
-                output.phase    = PHASE_HAB;
+                output.phase    = PHASE_FAM;
                 output.crit_met = hab_crit_met;
 
                 fam_output_append (output);
