@@ -147,74 +147,42 @@ void prepare_fam_items()
     fam_items.shuffle(0, -1);
 }
 
+
+TestItem[..] hab_items =
+{
+    {1, HABITUATION, "ae-E continua/ae_6_01_48000"},
+    {2, HABITUATION, "ae-E continua/ae_6_02_48000"},
+    {3, HABITUATION, "ae-E continua/ae_6_03_48000"},
+    {4, HABITUATION, "ae-E continua/ae_6_04_48000"},
+};
+
+// This list is stimulus wise a mirror of the habituation items, since in the
+// 
+TestItem[..] test_items =
+{
+    {1, NOVEL, "ae-E continua/ae_3_01_48000"},
+    {2, NOVEL, "ae-E continua/ae_3_02_48000"},
+    {3, NOVEL, "ae-E continua/ae_3_03_48000"},
+    {4, NOVEL, "ae-E continua/ae_3_04_48000"},
+};
+
 /**
  * In this experiment the stimuli are selected randomly from the test page.
  */
 void shuffle_hab_items()
 {
-    int i;
-    while (i < hab_items.size)
-    {
-        hab_items[i].shuffle(0, hab_items[i].size);
-        i++;
-    }
+    hab_items.shuffle(0, hab_items.size);
 }
 
-TestItem[..][..] hab_items =
-{
-    { // List 1
-        {1, HABITUATION, "bep1"},
-        {2, HABITUATION, "bep2"},
-        {3, HABITUATION, "bep3"},
-        {4, HABITUATION, "bep4"},
-        {5, HABITUATION, "bep5"}
-    },
-    { // List 2
-        {1, HABITUATION, "bip1"},
-        {2, HABITUATION, "bip2"},
-        {3, HABITUATION, "bip3"},
-        {4, HABITUATION, "bip4"},
-        {5, HABITUATION, "bip5"}
-    }
-};
-
-// This list is stimulus wise a mirror of the habituation items, since in the
-// 
-TestItem[..][..] test_items =
-{
-    { // List 1
-        {1, NOVEL, "bip1"},
-        {2, NOVEL, "bip2"},
-        {3, NOVEL, "bip3"},
-        {4, NOVEL, "bip4"},
-        {5, NOVEL, "bip5"}
-    },
-    { // List 2
-        {1, NOVEL, "bep1"},
-        {2, NOVEL, "bep2"},
-        {3, NOVEL, "bep3"},
-        {4, NOVEL, "bep4"},
-        {5, NOVEL, "bep5"}
-    }
-};
 
 void shuffle_test_items()
 {
-    int i;
-    while (i < test_items.size)
-    {
-        test_items[i].shuffle(0, test_items[i].size);
-        i++;
-    }
+    test_items.shuffle(0, test_items.size);
 }
 
 TestItem[..] attention_items =
 {
     {1, ATTENTION, "bupoki-final"},
-//    {2, ATTENTION, "bupoki2"},
-//    {3, ATTENTION, "bupoki3"},
-//    {4, ATTENTION, "bupoki4"},
-//    {5, ATTENTION, "bupoki5"}
 };
 
 
