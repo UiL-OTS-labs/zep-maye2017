@@ -74,7 +74,7 @@ Experiment experiment
             exit_page.add_image(stimuli_dir() + "images/zebra.png");
             exit_page.action(this, 60s);
             sound_playback.playback.set_scaling(1.0);
-            sound_playback.play(stimuli_dir() + "audio/handjes.wav", 
+            sound_playback.play(stimuli_dir() + "sounds/handjes.wav", 
                 now() + 1000ms);
         }
     }
