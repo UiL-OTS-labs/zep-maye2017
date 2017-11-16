@@ -150,7 +150,7 @@ Block task
 
         on_event:entry()
         {
-            item_list  = hab_items[nth_list];
+            item_list  = hab_items;
             num_cycles = MAX_HABITUATION_TRIALS;
         }
 
@@ -227,10 +227,10 @@ Block task
         {
             attention_page.setup();
 
-            item_list = test_items[nth_list];
+            item_list = test_items;
 
             if (MAX_TEST_TRIALS <= 0)
-                num_cycles = test_items[nth_list].size;
+                num_cycles = test_items.size;
             else
                 num_cycles = MAX_TEST_TRIALS;
         }
