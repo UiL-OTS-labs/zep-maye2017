@@ -102,9 +102,6 @@ Page fam_page
                         cumlt += (t - lookstart);
                     else
                         cumnlt+= (t - nolookstart);
-
-                    // abort trial
-                    done(CONTINUE);
                 }
             }
         }
@@ -411,7 +408,6 @@ Page fam_page
     {
         time start;
         start = test_window1.show_test_page(this, t);
-        println(start - zero_time());
         control.reset_clock();
         control.begin_clock(true);
         //control.release_clock(t);
