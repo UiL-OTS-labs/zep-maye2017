@@ -28,7 +28,7 @@ Block task
 
         hab_crit_met = false;
         int ppid = int(control.ppid);
-        if (ppid == 0 && expdb.experiment.status == EXP_STATUS_TESTING) {
+        if (ppid == 0 && expdb.experiment.status != EXP_STATUS_PREPARING) {
             print_error("Oops ppid == 0, did you enter a valid participant id?"
                         + "\n"
                         );
