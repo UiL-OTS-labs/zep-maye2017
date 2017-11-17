@@ -246,7 +246,11 @@ Page control
         {
             init()
             {
-                fill_pattern_color = CONTROL_CANVAS_COLOR;
+                //original.
+                //fill_pattern_color = CONTROL_CANVAS_COLOR;
+
+                // to work with OBS recording make it blue (it's a blue screen)
+                fill_pattern_color = color:blue;
             }
 
 
