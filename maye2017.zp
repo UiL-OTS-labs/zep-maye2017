@@ -1,7 +1,7 @@
 #!/usr/bin/env zep-1.14
 
 import response_box; // import response_box before std_baby_windows_1
-import std_baby_windows1;
+import std_baby_windows_uil;
 import std_entry_page2;
 import std_exit_page2;
 import std_sound_playback;
