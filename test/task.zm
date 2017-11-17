@@ -10,8 +10,8 @@ import stimuli;
 
 Block task
 {
-    int nth_list;
     int hab_crit_met;
+    int ppid;
 
     on_event:entry()
     {
@@ -26,8 +26,16 @@ Block task
         control.button_box.enable_button(int(BUTTON_LOWER),EVENT_START_ATTENTION);
         control.button_box.enable_button(int(BUTTON_RIGHT),EVENT_START_LOOKING);
 
-        nth_list = int(selected_group)/2; 
         hab_crit_met = false;
+        int ppid = int(control.ppid);
+        if (ppid == 0 && expdb.experiment.status == EXP_STATUS_TESTING) {
+            print_error("Oops ppid == 0, did you enter a valid participant id?"
+                        + "\n"
+                        );
+            print_error("ppid = " + control.ppid + "\n");
+            terminate "Invalid participant id\n";
+        }
+        prepare_test_items(ppid);
     }
 
     on_event:exit()

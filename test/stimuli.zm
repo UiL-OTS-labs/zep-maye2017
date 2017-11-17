@@ -147,8 +147,19 @@ void prepare_fam_items()
     fam_items.shuffle(0, -1);
 }
 
+/****** items for the habituation phase ******/
 
-TestItem[..] hab_items =
+TestItem[] hab_items;
+
+TestItem[..] hab_items_3 =
+{
+    {1, HABITUATION, "ae-E continua/ae_3_01_48000"},
+    {2, HABITUATION, "ae-E continua/ae_3_02_48000"},
+    {3, HABITUATION, "ae-E continua/ae_3_03_48000"},
+    {4, HABITUATION, "ae-E continua/ae_3_04_48000"},
+};
+
+TestItem[..] hab_items_6 =
 {
     {1, HABITUATION, "ae-E continua/ae_6_01_48000"},
     {2, HABITUATION, "ae-E continua/ae_6_02_48000"},
@@ -156,14 +167,24 @@ TestItem[..] hab_items =
     {4, HABITUATION, "ae-E continua/ae_6_04_48000"},
 };
 
-// This list is stimulus wise a mirror of the habituation items, since in the
-// 
-TestItem[..] test_items =
+/****** items for the test items ******/
+
+TestItem[] test_items;
+
+TestItem[..] test_items_3 =
 {
     {1, NOVEL, "ae-E continua/ae_3_01_48000"},
     {2, NOVEL, "ae-E continua/ae_3_02_48000"},
     {3, NOVEL, "ae-E continua/ae_3_03_48000"},
     {4, NOVEL, "ae-E continua/ae_3_04_48000"},
+};
+
+TestItem[..] test_items_6 =
+{
+    {1, NOVEL, "ae-E continua/ae_6_01_48000"},
+    {2, NOVEL, "ae-E continua/ae_6_02_48000"},
+    {3, NOVEL, "ae-E continua/ae_6_03_48000"},
+    {4, NOVEL, "ae-E continua/ae_6_04_48000"},
 };
 
 /**
@@ -178,6 +199,21 @@ void shuffle_hab_items()
 void shuffle_test_items()
 {
     test_items.shuffle(0, test_items.size);
+}
+
+void prepare_test_items(int ppid)
+{
+    bool is_odd = ppid % 2 != 0;
+    if (is_odd) {
+        hab_items   = hab_items_6;
+        test_items  = test_items_3;
+    }
+    else {
+        hab_items   = hab_items_3;
+        test_items  = test_items_6;
+    }
+    shuffle_hab_items();
+    shuffle_test_items();
 }
 
 TestItem[..] attention_items =
