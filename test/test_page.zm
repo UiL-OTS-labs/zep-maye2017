@@ -13,6 +13,14 @@ color[..] shape_colors =
     color:green
 };
 
+
+enum SoundChannel {
+    SND_CHANNEL_LEFT  = 1 << 0,
+    SND_CHANNEL_RIGHT = 1 << 1,
+    SND_CHANNEL_FRONT = 1 << 2
+};
+
+
 Page test_page
 {
     TestItem[]  item_list;      // All presentable items.
@@ -297,10 +305,20 @@ Page test_page
         SoundFile clip{}
         SoundPlayback playback{}
 
+        SoundChannel chan;
+
         on_event:start()
         {
+            int lights = 0;
+            if (chan & SND_CHANNEL_LEFT);
+                lights |= LEFT_SIDE;
+            if (chan & SND_CHANNEL_FRONT)
+                lights |= FRONT_SIDE;
+            if (chan & SND_CHANNEL_RIGHT)
+                lights |= LEFT_SIDE;
+
             control.hide_speaker_icon(FRONT_SIDE | LEFT_SIDE | RIGHT_SIDE);
-            control.show_speaker_icon(FRONT_SIDE);
+            control.show_speaker_icon(lights);
 
             //perhaps save audio start even to detailed log.
         }
@@ -329,9 +347,25 @@ Page test_page
             item = item_list[random(0, item_list.size)];
         }
 
-        time play(time t)
+        time play(time t, int channel)
         {
             abort();
+            chan = channel;
+            if (chan & SND_CHANNEL_FRONT)
+                sound_output_device.set_scaling(0, 1.0);
+            else 
+                sound_output_device.set_scaling(0, 0.0);
+            
+            if (chan & SND_CHANNEL_LEFT)
+                sound_output_device.set_scaling(2, 1.0);
+            else 
+                sound_output_device.set_scaling(2, 0.0);
+            
+            if (chan & SND_CHANNEL_RIGHT)
+                sound_output_device.set_scaling(3, 1.0);
+            else 
+                sound_output_device.set_scaling(3, 0.0);
+
             playback.device = sound_output_device;
             clip.file = stimuli_dir() + "sounds/" + item.snd_fn + ".wav";
 
