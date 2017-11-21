@@ -348,12 +348,12 @@ Page fam_page
         on_event:start()
         {
             int lights = 0;
-            if (dir & SND_DIRECTION_LEFT);
+            if (dir & SND_DIRECTION_LEFT)
                 lights |= LEFT_SIDE;
             if (dir & SND_DIRECTION_FRONT)
                 lights |= FRONT_SIDE;
             if (dir & SND_DIRECTION_RIGHT)
-                lights |= LEFT_SIDE;
+                lights |= RIGHT_SIDE;
 
             control.hide_speaker_icon(FRONT_SIDE | LEFT_SIDE | RIGHT_SIDE);
             control.show_speaker_icon(lights);

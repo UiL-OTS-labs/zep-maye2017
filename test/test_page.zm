@@ -316,12 +316,12 @@ Page test_page
         on_event:start()
         {
             int lights = 0;
-            if (dir & SND_DIRECTION_LEFT);
+            if (dir & SND_DIRECTION_LEFT)
                 lights |= LEFT_SIDE;
             if (dir & SND_DIRECTION_FRONT)
                 lights |= FRONT_SIDE;
             if (dir & SND_DIRECTION_RIGHT)
-                lights |= LEFT_SIDE;
+                lights |= RIGHT_SIDE;
 
             control.hide_speaker_icon(FRONT_SIDE | LEFT_SIDE | RIGHT_SIDE);
             control.show_speaker_icon(lights);
@@ -387,7 +387,7 @@ Page test_page
             playback.device = sound_output_device;
             clip.file = stimuli_dir() + "sounds/" + item.snd_fn + ".wav";
 
-            start (t);
+            start(t);
             return expected_start_time;
         }
     }
