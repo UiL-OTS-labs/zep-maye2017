@@ -14,12 +14,18 @@ color[..] shape_colors =
 };
 
 
-enum SoundChannel {
-    SND_CHANNEL_LEFT  = 1 << 0,
-    SND_CHANNEL_RIGHT = 1 << 1,
-    SND_CHANNEL_FRONT = 1 << 2
+enum SoundDirection {
+    SND_DIRECTION_LEFT  = 1 << 0,
+    SND_DIRECTION_RIGHT = 1 << 1,
+    SND_DIRECTION_FRONT = 1 << 2
 };
 
+enum SoundChannel {
+    CHANNEL_FRONT_LEFT  = 0,
+    CHANNEL_FRONT_RIGHT = 1,
+    CHANNEL_REAR_LEFT   = 2,
+    CHANNEL_REAR_RIGHT  = 3
+};
 
 Page test_page
 {
@@ -305,16 +311,16 @@ Page test_page
         SoundFile clip{}
         SoundPlayback playback{}
 
-        SoundChannel chan;
+        SoundDirection dir;
 
         on_event:start()
         {
             int lights = 0;
-            if (chan & SND_CHANNEL_LEFT);
+            if (dir & SND_DIRECTION_LEFT);
                 lights |= LEFT_SIDE;
-            if (chan & SND_CHANNEL_FRONT)
+            if (dir & SND_DIRECTION_FRONT)
                 lights |= FRONT_SIDE;
-            if (chan & SND_CHANNEL_RIGHT)
+            if (dir & SND_DIRECTION_RIGHT)
                 lights |= LEFT_SIDE;
 
             control.hide_speaker_icon(FRONT_SIDE | LEFT_SIDE | RIGHT_SIDE);
@@ -339,7 +345,9 @@ Page test_page
 
             // start the new audio stimulus
             select_new_stimulus();
-            play(event_time + TEST_ISI);
+
+            // always from front.
+            play(event_time + TEST_ISI, SND_DIRECTION_FRONT);
         }
 
         void select_new_stimulus()
@@ -347,24 +355,34 @@ Page test_page
             item = item_list[random(0, item_list.size)];
         }
 
-        time play(time t, int channel)
+        time play(time t, SoundDirection direction)
         {
             abort();
-            chan = channel;
-            if (chan & SND_CHANNEL_FRONT)
-                sound_output_device.set_scaling(0, 1.0);
+            dir = direction;
+
+            playback.set_scaling(0.0); // all channels off.
+
+            // Turn scaling back on for the proper channels
+            // keep in mind that the front right isn't wired (2017)
+            // and the front left represents the front.
+            if (dir & SND_DIRECTION_FRONT) {
+                playback.set_scaling(CHANNEL_FRONT_LEFT , 1.0);
+                playback.set_scaling(CHANNEL_FRONT_RIGHT, 1.0);
+            }
+            else {
+                playback.set_scaling(CHANNEL_FRONT_LEFT , 0.0);
+                playback.set_scaling(CHANNEL_FRONT_RIGHT, 0.0);
+            }
+
+            if (dir & SND_DIRECTION_LEFT)
+                playback.set_scaling(CHANNEL_REAR_LEFT, 1.0);
             else 
-                sound_output_device.set_scaling(0, 0.0);
+                playback.set_scaling(CHANNEL_REAR_LEFT, 0.0);
             
-            if (chan & SND_CHANNEL_LEFT)
-                sound_output_device.set_scaling(2, 1.0);
+            if (dir & SND_DIRECTION_RIGHT)
+                playback.set_scaling(CHANNEL_REAR_RIGHT, 1.0);
             else 
-                sound_output_device.set_scaling(2, 0.0);
-            
-            if (chan & SND_CHANNEL_RIGHT)
-                sound_output_device.set_scaling(3, 1.0);
-            else 
-                sound_output_device.set_scaling(3, 0.0);
+                playback.set_scaling(CHANNEL_REAR_RIGHT, 0.0);
 
             playback.device = sound_output_device;
             clip.file = stimuli_dir() + "sounds/" + item.snd_fn + ".wav";
@@ -407,7 +425,7 @@ Page test_page
         // test_window1.activate(); // to capture keyboard events.
         this.target    = caller;
 
-        audio.play(tref);
+        audio.play(tref, SND_DIRECTION_FRONT);
 
         response.start(tref);
         layout.start_stimulus(tref);
