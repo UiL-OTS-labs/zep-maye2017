@@ -67,7 +67,7 @@ assert(sum(uni_hist) // 4 == sum(uni_hist) / 4)
 assert(sum(uni_hist) == sum(bi_hist))
 assert(len(uni_hist) == len(bi_hist))
 
-speaker_list= [1, 2, 3, 4] * (sum(bi_hist) / 4)
+speaker_list= [1, 2, 3, 4] * (sum(bi_hist) // 4)
 assert(len(speaker_list) == sum(bi_hist))
 
 print ("sum_bidist = {}".format(sum(bi_hist)) )
