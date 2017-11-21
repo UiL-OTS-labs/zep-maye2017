@@ -343,10 +343,20 @@ Page fam_page
         SoundFile clip{}
         SoundPlayback playback{}
 
+        SoundDirection dir;
+
         on_event:start()
         {
+            int lights = 0;
+            if (dir & SND_DIRECTION_LEFT);
+                lights |= LEFT_SIDE;
+            if (dir & SND_DIRECTION_FRONT)
+                lights |= FRONT_SIDE;
+            if (dir & SND_DIRECTION_RIGHT)
+                lights |= LEFT_SIDE;
+
             control.hide_speaker_icon(FRONT_SIDE | LEFT_SIDE | RIGHT_SIDE);
-            control.show_speaker_icon(FRONT_SIDE);
+            control.show_speaker_icon(lights);
 
             //perhaps save audio start even to detailed log.
         }
@@ -373,9 +383,35 @@ Page fam_page
             done(CONTINUE);
         }
 
-        time play(time t, string fn)
+        time play(time t, string fn, SoundDirection direction)
         {
             abort();
+            dir = direction;
+
+            playback.set_scaling(0.0); // all channels off.
+
+            // Turn scaling back on for the proper channels
+            // keep in mind that the front right isn't wired (2017)
+            // and the front left represents the front.
+            if (dir & SND_DIRECTION_FRONT) {
+                playback.set_scaling(CHANNEL_FRONT_LEFT , 1.0);
+                playback.set_scaling(CHANNEL_FRONT_RIGHT, 1.0);
+            }
+            else {
+                playback.set_scaling(CHANNEL_FRONT_LEFT , 0.0);
+                playback.set_scaling(CHANNEL_FRONT_RIGHT, 0.0);
+            }
+
+            if (dir & SND_DIRECTION_LEFT)
+                playback.set_scaling(CHANNEL_REAR_LEFT, 1.0);
+            else 
+                playback.set_scaling(CHANNEL_REAR_LEFT, 0.0);
+            
+            if (dir & SND_DIRECTION_RIGHT)
+                playback.set_scaling(CHANNEL_REAR_RIGHT, 1.0);
+            else 
+                playback.set_scaling(CHANNEL_REAR_RIGHT, 0.0);
+
             playback.device = sound_output_device;
             clip.file = stimuli_dir() + "sounds/ae-E continua/" + fn;
 
@@ -437,7 +473,7 @@ Page fam_page
         // test_window1.activate(); // to capture keyboard events.
         this.target    = caller;
 
-        audio.play(tref, item.snd_fn);
+        audio.play(tref, item.snd_fn, SND_DIRECTION_FRONT);
 
         control.target = this;
 
