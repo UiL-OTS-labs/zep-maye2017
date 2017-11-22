@@ -12,6 +12,7 @@ Block task
 {
     int hab_crit_met;
     int ppid;
+    int current_trial;
 
     on_event:entry()
     {
@@ -172,6 +173,8 @@ Block task
                         reference_time,
                         habituation.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()
@@ -248,6 +251,8 @@ Block task
                         reference_time,
                         test.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()
@@ -310,6 +315,8 @@ Block task
                         reference_time,
                         test.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()
