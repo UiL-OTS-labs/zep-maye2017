@@ -30,3 +30,6 @@ const int EVENT_AUDIO_FINISH    = 3;    // signals end of audio (not used).
 const int EVENT_STOP_TIMER      = 4;    // The started timer aborts the trial.
 
 const int EVENT_START_ATTENTION = 5;    // starts the attention grabber.
+const int EVENT_STOP            = 6;    // used to finalize looking time in
+                                        // familiarization phase.
+

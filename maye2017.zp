@@ -1,7 +1,7 @@
 #!/usr/bin/env zep-1.14
 
 import response_box; // import response_box before std_baby_windows_1
-import std_baby_windows1;
+import std_baby_windows_uil;
 import std_entry_page2;
 import std_exit_page2;
 import std_sound_playback;
@@ -74,7 +74,7 @@ Experiment experiment
             exit_page.add_image(stimuli_dir() + "images/zebra.png");
             exit_page.action(this, 60s);
             sound_playback.playback.set_scaling(1.0);
-            sound_playback.play(stimuli_dir() + "audio/handjes.wav", 
+            sound_playback.play(stimuli_dir() + "sounds/handjes.wav", 
                 now() + 1000ms);
         }
     }

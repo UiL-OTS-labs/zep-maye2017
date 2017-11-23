@@ -2,16 +2,17 @@
 import hvf_event;
 import defs;
 import output;
-//import habituation_handler;
 
+import fam_page;
 import test_page;
 import attention_page;
 import stimuli;
 
 Block task
 {
-    int nth_list;
     int hab_crit_met;
+    int ppid;
+    int current_trial;
 
     on_event:entry()
     {
@@ -26,13 +27,113 @@ Block task
         control.button_box.enable_button(int(BUTTON_LOWER),EVENT_START_ATTENTION);
         control.button_box.enable_button(int(BUTTON_RIGHT),EVENT_START_LOOKING);
 
-        nth_list = int(selected_group)/2; 
         hab_crit_met = false;
+        int ppid = int(control.ppid);
+        if (ppid == 0 && expdb.experiment.status != EXP_STATUS_PREPARING) {
+            print_error("Oops ppid == 0, did you enter a valid participant id?"
+                        + "\n"
+                        );
+            print_error("ppid = " + control.ppid + "\n");
+            terminate "Invalid participant id\n";
+        }
+        prepare_test_items(ppid);
     }
 
     on_event:exit()
     {
         control.button_box.disable_buttons();
+    } 
+
+    //--------- Familiarization -------
+
+    Block familiarization
+    {
+        on_event:entry()
+        {
+            prepare_fam_items();
+            num_cycles = fam_items.size;
+            if (have_flag("short")) {
+                num_cycles = 5;
+            }
+        }
+
+        on_event:exit()
+        {
+            fam_page.stop_grid();
+            save_fam_output();
+        }
+
+        // Run the attention getter once before the first trial.
+        // skip in all other cases.
+        TransientPart skip_attention
+        {
+            on_event:entry()
+            {
+                if (familiarization.cycle == 0) {
+                    grab_attention.enter();
+                }
+                else {
+                    trial.enter();
+                }
+            }
+        }
+        
+        Trial grab_attention
+        {
+            on_event:entry()
+            {
+                attention_page.setup();
+                attention_page.action(this, reference_time, 0ms);
+            }
+
+            on_event:exit()
+            {
+                trial.reference_time = fam_page.start_grid(now());
+            }
+        }
+        
+        Trial trial
+        {
+            on_event:entry()
+            {
+                TestItem item;
+                bool is_last = false;
+                if (familiarization.cycle == familiarization.num_cycles - 1)
+                    is_last = true;
+
+                item = fam_items[familiarization.cycle];
+                if (familiarization.cycle == 0) // start right after attention
+                    fam_page.action(
+                            this,
+                            reference_time,
+                            item,
+                            is_last
+                            );
+                else // start after isi.
+                    fam_page.action(
+                            this,
+                            reference_time + FAM_ISI,
+                            item,
+                            is_last
+                            );
+                
+            }
+
+            on_event:exit()
+            {
+                TestOutput output;
+
+                output.trialnum = familiarization.cycle + 1;
+                output.lt       = int(fam_page.response.cumlt);
+                output.nlt      = int(fam_page.response.cumnlt);
+                output.looks    = fam_page.response.nlooks;
+                output.lookaways= fam_page.response.nlookaways;
+                output.phase    = PHASE_FAM;
+                output.crit_met = hab_crit_met;
+
+                fam_output_append (output);
+            }
+        }
     }
 
     //--------- Habituation -----------
@@ -43,7 +144,7 @@ Block task
 
         on_event:entry()
         {
-            item_list = hab_items[nth_list];
+            item_list  = hab_items;
             num_cycles = MAX_HABITUATION_TRIALS;
         }
 
@@ -72,6 +173,8 @@ Block task
                         reference_time,
                         habituation.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()
@@ -120,10 +223,10 @@ Block task
         {
             attention_page.setup();
 
-            item_list = test_items[nth_list];
+            item_list = test_items;
 
             if (MAX_TEST_TRIALS <= 0)
-                num_cycles = test_items[nth_list].size;
+                num_cycles = test_items.size;
             else
                 num_cycles = MAX_TEST_TRIALS;
         }
@@ -148,6 +251,8 @@ Block task
                         reference_time,
                         test.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()
@@ -210,6 +315,8 @@ Block task
                         reference_time,
                         test.cycle + 1
                         );
+                task.current_trial++;
+                control.set_current_trial(task.current_trial);
             }
             
             on_event:exit()

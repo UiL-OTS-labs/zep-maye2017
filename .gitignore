@@ -1,2 +1,8 @@
+# ignore the database directory
 /db/*
+
+# ignore csv in the output
 /*.csv
+
+# ignore vim temporary files
+*.sw[a-z]
