@@ -96,25 +96,26 @@ Block task
         {
             on_event:entry()
             {
-                TestItem item;
-                bool is_last = false;
-                if (familiarization.cycle == familiarization.num_cycles - 1)
-                    is_last = true;
-
-                item = fam_items[familiarization.cycle];
+                TestItem item = fam_items[familiarization.cycle];
+                
+                bool is_last = familiarization.cycle == familiarization.num_cycles - 1;
+                bool is_first = familiarization.cycle == 0;
+                
                 if (familiarization.cycle == 0) // start right after attention
                     fam_page.action(
                             this,
                             reference_time,
                             item,
-                            is_last
+                            is_last,
+                            is_first
                             );
                 else // start after isi.
                     fam_page.action(
                             this,
                             reference_time + FAM_ISI,
                             item,
-                            is_last
+                            is_last,
+                            is_first
                             );
                 
             }

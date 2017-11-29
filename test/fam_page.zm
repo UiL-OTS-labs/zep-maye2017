@@ -440,8 +440,6 @@ Page fam_page
         time start = test_window1.show_test_page(this, t);
         
         start = layout.start_grid(start);
-        control.start_clock(start);
-        response.start(start);
         
         return start;
     }
@@ -456,7 +454,8 @@ Page fam_page
     time action(Object      caller,
                 time        start,
                 TestItem    item,
-                bool        last
+                bool        last,
+                bool        first
                 )
     {
         time tref = start;
@@ -465,8 +464,13 @@ Page fam_page
         // test_window1.activate(); // to capture keyboard events.
         this.target    = caller;
 
-        audio.play(tref, item.snd_fn, SND_DIRECTION_FRONT);
-
+        time audio_onset = audio.play(tref, item.snd_fn, SND_DIRECTION_FRONT);
+        
+        if(first)
+        {
+            control.start_clock(audio_onset);
+            response.start(audio_onset);
+        }
         control.target = this;
 
         this.is_last = last;
