@@ -124,8 +124,19 @@ Block task
                 TestOutput output;
 
                 output.trialnum = familiarization.cycle + 1;
-                output.lt       = int(fam_page.response.cumlt);
-                output.nlt      = int(fam_page.response.cumnlt);
+                if(fam_page.response.is_looking)
+                {
+                    output.lt       = int(fam_page.response.cumlt 
+                                + (event_time - fam_page.response.lookstart) );
+                    output.nlt      = int(fam_page.response.cumnlt);
+                }
+                else // !response.is_looking
+                {
+                    output.lt       = int(fam_page.response.cumlt);
+                    output.nlt      = int(fam_page.response.cumnlt
+                                + (event_time - fam_page.response.nolookstart) );
+                }
+                
                 output.looks    = fam_page.response.nlooks;
                 output.lookaways= fam_page.response.nlookaways;
                 output.phase    = PHASE_FAM;
