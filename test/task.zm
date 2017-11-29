@@ -124,17 +124,25 @@ Block task
                 TestOutput output;
 
                 output.trialnum = familiarization.cycle + 1;
-                if(fam_page.response.is_looking)
-                {
-                    output.lt       = int(fam_page.response.cumlt 
-                                + (event_time - fam_page.response.lookstart) );
-                    output.nlt      = int(fam_page.response.cumnlt);
-                }
-                else // !response.is_looking
+                if(fam_page.is_last) // report final
                 {
                     output.lt       = int(fam_page.response.cumlt);
-                    output.nlt      = int(fam_page.response.cumnlt
-                                + (event_time - fam_page.response.nolookstart) );
+                    output.nlt      = int(fam_page.response.cumnlt);
+                }
+                else
+                {
+                    if(fam_page.response.is_looking)
+                    {
+                        output.lt       = int(fam_page.response.cumlt 
+                                    + (event_time - fam_page.response.lookstart) );
+                        output.nlt      = int(fam_page.response.cumnlt);
+                    }
+                    else // !fam_page.response_is_looking
+                    {
+                        output.lt       = int(fam_page.response.cumlt);
+                        output.nlt      = int(fam_page.response.cumnlt
+                                    + (event_time - fam_page.response.nolookstart) );
+                    }
                 }
                 
                 output.looks    = fam_page.response.nlooks;

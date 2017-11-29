@@ -52,14 +52,6 @@ Page fam_page
             is_looking = true;
         }
 
-        on_event:finish()
-        {
-            if (is_looking)
-                cumlt  += (event_time - lookstart);
-            else
-                cumnlt += (event_time - nolookstart);
-        }
-
         void clear()
         {
             is_looking  = true;
