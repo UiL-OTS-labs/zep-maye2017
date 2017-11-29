@@ -323,7 +323,7 @@ Page fam_page
             show_new_pictures();
             start(t);
             grid_timer.start(t + INTER_GRID_DURATION);
-            return canvas.expected_start_time;
+            return expected_start_time;
         }
 
         void stop_grid()
@@ -442,15 +442,15 @@ Page fam_page
 
     time start_grid(time t)
     {
-        time start;
-        start = test_window1.show_test_page(this, t);
         control.reset_clock();
         control.begin_clock(true);
-        //control.release_clock(t);
-        control.start_clock(t);
-        layout.start_grid(t);
+        
+        time start = test_window1.show_test_page(this, t);
+        
+        start = layout.start_grid(start);
+        control.start_clock(start);
         response.start(start);
-
+        
         return start;
     }
 
