@@ -17,7 +17,7 @@ HISTORY:
 
 // Experiment version. In piloting stage and later increment this on each
 // relevant change.
-const int       EXPERIMENT_VERSION              = 3;
+const int       EXPERIMENT_VERSION              = 4;
 
 
 // Database id. Any alphanumeric identifier is OK (typically set to "01").
