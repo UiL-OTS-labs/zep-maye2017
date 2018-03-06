@@ -52,14 +52,6 @@ Page fam_page
             is_looking = true;
         }
 
-        on_event:finish()
-        {
-            if (is_looking)
-                cumlt  += (event_time - lookstart);
-            else
-                cumnlt += (event_time - nolookstart);
-        }
-
         void clear()
         {
             is_looking  = true;
@@ -323,7 +315,7 @@ Page fam_page
             show_new_pictures();
             start(t);
             grid_timer.start(t + INTER_GRID_DURATION);
-            return canvas.expected_start_time;
+            return expected_start_time;
         }
 
         void stop_grid()
@@ -442,15 +434,13 @@ Page fam_page
 
     time start_grid(time t)
     {
-        time start;
-        start = test_window1.show_test_page(this, t);
         control.reset_clock();
         control.begin_clock(true);
-        //control.release_clock(t);
-        control.start_clock(t);
-        layout.start_grid(t);
-        response.start(start);
-
+        
+        time start = test_window1.show_test_page(this, t);
+        
+        start = layout.start_grid(start);
+        
         return start;
     }
 
@@ -464,7 +454,8 @@ Page fam_page
     time action(Object      caller,
                 time        start,
                 TestItem    item,
-                bool        last
+                bool        last,
+                bool        first
                 )
     {
         time tref = start;
@@ -473,8 +464,13 @@ Page fam_page
         // test_window1.activate(); // to capture keyboard events.
         this.target    = caller;
 
-        audio.play(tref, item.snd_fn, SND_DIRECTION_FRONT);
-
+        time audio_onset = audio.play(tref, item.snd_fn, SND_DIRECTION_FRONT);
+        
+        if(first)
+        {
+            control.start_clock(audio_onset);
+            response.start(audio_onset);
+        }
         control.target = this;
 
         this.is_last = last;
