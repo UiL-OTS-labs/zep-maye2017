@@ -264,14 +264,14 @@ Page control
                 copywin1.y = margin + border;
 
                 front_light_icon.offset_x = actual_width / 2;
-                front_light_icon.offset_y = 25; //75;
+                front_light_icon.offset_y = 25;
                 left_light_icon.offset_x = 75;
                 left_light_icon.offset_y = actual_height / 2;
                 right_light_icon.offset_x = actual_width - 75;
                 right_light_icon.offset_y = actual_height / 2;
 
                 front_speaker_icon.offset_x = front_light_icon.offset_x;
-                front_speaker_icon.offset_y = front_light_icon.offset_y;// + 80;
+                front_speaker_icon.offset_y = front_light_icon.offset_y;
                 left_speaker_icon.offset_x = left_light_icon.offset_x;
                 left_speaker_icon.offset_y = left_light_icon.offset_y + 100;
                 right_speaker_icon.offset_x = right_light_icon.offset_x;
@@ -283,10 +283,13 @@ Page control
                 counter.offset_x = actual_width - 50;
                 counter.offset_y = 50;
 
-                counter_background.width = counter.offset_x - counter_active.offset_x + ( counter_active.radius * 2 ) + 5;
+                counter_background.width =
+                        counter.offset_x - counter_active.offset_x +
+                        (counter_active.radius * 2) + 5;
                 counter_background.height = counter.line_height;
 
-                counter_background.offset_x = counter_active.offset_x - counter_active.radius - 5;
+                counter_background.offset_x =
+                        counter_active.offset_x - counter_active.radius - 5;
                 counter_background.offset_y = counter.offset_y;
 
                 attention_cross.handle_resize();
